@@ -1,7 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setList } from "../store/til";
 
+import axios from "axios";
 /**
  *
  * 할일 부터 정리하고 시작할까요!
@@ -17,9 +19,34 @@ import { useNavigate } from "react-router-dom";
 
 function Main() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const til_list = useSelector((store) => store.til.til_list);
+  // console.log(til_list);
 
-  console.log(til_list);
+  //----api(db) 작성 완료 했으니 GET 요청하기 ! ---------------------
+  // 우선 목록에서 가지고 오기
+  // ---> 가지고 오는 시점 : mount 끝난 후
+  //      어딘가에서 무언가를 가지고 오는 것 : 사이드 이펙트 
+  //      사이드 이펙트를 관리하기 위한 훅 : useEffect
+
+  const getTilList = async () => {
+    const res = await axios.get("http://localhost:5001/til_list");
+
+    // console.log(res);
+
+    dispatch(setList(res.data)); // setList 액션을 실행시킬거야 ! 데이터는 저걸 넣어줄거야 !
+
+    // const data = res.data;
+    // --> 받아온 response에서 data만 쓰면 됨
+    // -----> 리덕스에도 추가해줘야 추가한 데이터를 가져올 수 있음
+    //          : action 만들기, import 하기(액션함수, 디스패치)
+  }
+  React.useEffect( () => {
+    // --> import : axios
+    // useEffect에서는 async await 쓸 수 없으니 따로 함수로 빼기
+    getTilList(); 
+  },[]);
+ 
 
   return (
     <>

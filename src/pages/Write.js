@@ -1,6 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // post 요청 보낼거니까 꼭 필요 !
+
 import { add } from "../store/til";
 
 /**
@@ -48,6 +50,7 @@ function Write() {
     time_ref.current.value = "";
 
     dispatch(add({ til_data: til_data }));
+    axios.post("http://localhost:5001/til_list", til_data);
     navigate(-1);
   };
 
